@@ -1,0 +1,7 @@
+; $Id$
+name = SPARQL API
+description = Enables the use of SPARQL queries with the RDF API.
+package = RDF
+dependencies[] = rdf
+core = 6.x
+php = 5.2
