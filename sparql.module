@@ -48,6 +48,7 @@ function sparql_perm() {
  */
 function sparql_menu() {
   return array(
+    // SPARQL endpoint
     'sparql' => array(
       'title' => 'SPARQL query',
       'description' => '',
@@ -64,6 +65,7 @@ function sparql_menu() {
     'admin/settings/sparql' => array(
       'title' => 'SPARQL settings',
       'description' => 'Settings for the SPARQL API.',
+      'access arguments' => array('administer site configuration'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('sparql_admin_settings'),
       'file' => 'sparql.admin.inc',
