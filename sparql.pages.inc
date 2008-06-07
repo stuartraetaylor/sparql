@@ -117,14 +117,17 @@ function theme_sparql_results($result) {
         return drupal_render($form['results']);
       }
       else {
+        require_once drupal_get_path('module', 'rdf') . '/rdf.theme.inc';
         $vars = array_keys($result[0]);
-        $rows = array_map('array_values', $result);
+        $rows = array_map('theme_sparql_results_row', $result);
         return theme('table', $vars, $rows, array('class' => 'sparql-results'));
       }
-      break;
 
     case 'object':  // CONSTRUCT/DESCRIBE
       return theme('rdf_triple_table', $result);
-      break;
   }
+}
+
+function theme_sparql_results_row($row) {
+  return array_map('theme_rdf_value', array_values($row));
 }
