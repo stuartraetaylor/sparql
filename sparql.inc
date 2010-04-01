@@ -1,7 +1,8 @@
 <?php
 // $Id$
 /**
- * sparql.inc - SPARQL API query engine implementation.
+ * @file
+ * SPARQL API query engine implementation.
  *
  * @author Arto Bendiken <http://bendiken.net/>
  * @copyright Copyright (c) 2007-2008 Arto Bendiken. All rights reserved.
@@ -150,7 +151,7 @@ class SPARQL_Query implements IteratorAggregate {
 
   static function prefixes() {
     $prefixes = array();
-    foreach (rdf_get_namespaces() as $prefix => $base_uri) {
+    foreach (drupal_get_rdf_namespaces() as $prefix => $base_uri) {
       if ($prefix != '_') { // FIXME
         $prefixes[] = "PREFIX $prefix: <$base_uri>";
       }

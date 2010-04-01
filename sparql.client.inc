@@ -1,7 +1,8 @@
 <?php
 // $Id$
 /**
- * sparql.client.inc - SPARQL HTTP client implementation.
+ * @file 
+ * SPARQL HTTP client implementation.
  *
  * @author Arto Bendiken <http://bendiken.net/>
  * @copyright Copyright (c) 2007-2008 Arto Bendiken. All rights reserved.
@@ -23,31 +24,24 @@ function sparql_request($endpoint, $query, $options = array(), &$errors = NULL) 
   $request = $endpoint . '?' . http_build_query($options, NULL, '&');
   $headers = array('Accept' => $options['format'] . ', */*');
   if ($response = drupal_http_request($request, $headers, 'GET')) {
-
     if (empty($response->code) && empty($response->data)) {
       $errors[] = t('Remote SPARQL query timed out; please try again.');
     }
-    else if (isset($response->error) && empty($response->error)) {
+    elseif (isset($response->error) && empty($response->error)) {
       // This is seen when specifying a URL that doesn't even resolve
       $errors[] = t('Invalid SPARQL endpoint specified.');
     }
-    else if (isset($response->error)) {
+    elseif (isset($response->error)) {
       $error = str_replace(SPARQL_Query::prefixes() . "\n", '', $response->data);
       $errors[] = t('Remote SPARQL endpoint returned error: %error', array('%error' => $error));
     }
-    else if (preg_match('!^([\w]+/[^;]+)!', $response->headers['Content-Type'], $matches)) {
+    elseif (preg_match('!^([\w]+/[^;]+)!', $response->headers['Content-Type'], $matches)) {
 
       switch ($format = $matches[1]) {
         case 'application/sparql-results+json':
-        case 'application/json':
-        case 'application/javascript':
-        case 'text/javascript':
           return sparql_parse_json_results($response->data);
 
         case 'application/sparql-results+xml':
-        case 'application/xml':
-        case 'text/xml':
-        case 'text/plain': // CIA Factbook returns this
           return sparql_parse_xml_results($response->data);
 
         default:
@@ -64,7 +58,7 @@ function sparql_request($endpoint, $query, $options = array(), &$errors = NULL) 
     }
   }
 
-  return NULL;
+  return FALSE;
 }
 
 /**
@@ -86,7 +80,7 @@ function sparql_parse_json_results($input) {
     foreach (get_object_vars($row) as $field => $binding) {
       switch ($binding->type) {
         case 'uri':
-          $value = rdf_uriref($binding->value);
+          $value = $binding->value;
           break;
         case 'bnode':
           $bnode_id = $binding->value;
@@ -96,7 +90,7 @@ function sparql_parse_json_results($input) {
           $value = isset($binding->{'xml:lang'}) ? rdf_literal($binding->value, $binding->{'xml:lang'}) : $binding->value;
           break;
         case 'typed-literal':
-          $value = rdf_literal($binding->value, NULL, rdf_uriref($binding->datatype));
+          $value = rdf_literal($binding->value, NULL, $binding->datatype);
           break;
         default: // unknown/invalid
           continue 2; // skip this binding
@@ -129,15 +123,15 @@ function sparql_parse_xml_results($input) {
 
     foreach ($result->binding as $binding) {
       if (isset($binding->uri)) {
-        $value    = rdf_uriref((string)$binding->uri);
+        $value    = (string)$binding->uri;
       }
-      else if (isset($binding->bnode)) {
+      elseif (isset($binding->bnode)) {
         $bnode_id = (string)$binding->bnode;
         $value    = isset($bnodes[$bnode_id]) ? $bnodes[$bnode_id] : ($bnodes[$bnode_id] = rdf_bnode());
       }
       else {
         $literal  = $binding->literal;
-        $datatype = isset($literal['datatype']) ? rdf_uriref((string)$literal['datatype']) : NULL;
+        $datatype = isset($literal['datatype']) ? (string)$literal['datatype'] : NULL;
         $language = _sparql_parse_xml_results_language($literal);
         $value    = rdf_literal((string)$literal, $language, $datatype);
       }

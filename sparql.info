@@ -1,7 +1,10 @@
 ; $Id$
 name = SPARQL API
-description = Enables the use of SPARQL queries with the RDF API.
+description = Enables the use of SPARQL queries.
 package = RDF
 dependencies[] = rdf
-core = 6.x
+dependencies[] = libraries
+core = 7.x
 php = 5.2
+files[] = sparql.module
+configure = admin/settings/sparql

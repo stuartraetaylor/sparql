@@ -1,6 +1,12 @@
 <?php
 // $Id$
 
+/**
+ * @file
+ * Tests for the sparql module.
+ *
+ */
+
 //////////////////////////////////////////////////////////////////////////////
 // SPARQL unit tests (CIA Factbook)
 
