@@ -78,24 +78,30 @@ function sparql_parse_json_results($input) {
     $item = array();
 
     foreach (get_object_vars($row) as $field => $binding) {
-      switch ($binding->type) {
-        case 'uri':
-          $value = $binding->value;
-          break;
-        case 'bnode':
-          $bnode_id = $binding->value;
-          $value = isset($bnodes[$bnode_id]) ? $bnodes[$bnode_id] : ($bnodes[$bnode_id] = rdf_bnode());
-          break;
-        case 'literal':
-          $value = isset($binding->{'xml:lang'}) ? rdf_literal($binding->value, $binding->{'xml:lang'}) : $binding->value;
-          break;
-        case 'typed-literal':
-          $value = rdf_literal($binding->value, NULL, $binding->datatype);
-          break;
-        default: // unknown/invalid
-          continue 2; // skip this binding
-          break;
+      if (isset($binding->type)) {
+        switch ($binding->type) {
+          case 'uri':
+            $value = $binding->value;
+            break;
+          case 'bnode':
+            $bnode_id = $binding->value;
+            $value = isset($bnodes[$bnode_id]) ? $bnodes[$bnode_id] : ($bnodes[$bnode_id] = rdf_bnode());
+            break;
+          case 'literal':
+            $value = isset($binding->{'xml:lang'}) ? rdf_literal($binding->value, $binding->{'xml:lang'}) : $binding->value;
+            break;
+          case 'typed-literal':
+            $value = rdf_literal($binding->value, NULL, $binding->datatype);
+            break;
+          default: // unknown/invalid
+            continue 2; // skip this binding
+            break;
+        }
       }
+      else {
+        $value = NULL; 
+      }
+      
       $item[$field] = $value;
     }
 

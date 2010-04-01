@@ -151,12 +151,7 @@ class SPARQL_Query implements IteratorAggregate {
 
   static function prefixes() {
     $prefixes = array();
-    foreach (drupal_get_rdf_namespaces() as $prefix => $base_uri) {
-      if ($prefix != '_') { // FIXME
-        $prefixes[] = "PREFIX $prefix: <$base_uri>";
-      }
-    }
-    return implode("\n", $prefixes);
+    return preg_replace('/xmlns:(\w+)\=\"([^\"]*)\"/', "PREFIX $1: <$2>", drupal_get_rdf_namespaces());
   }
 
   function __construct($type, array $options = array()) {
