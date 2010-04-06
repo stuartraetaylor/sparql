@@ -15,7 +15,5 @@ INSTALLATION
   1. Copy all the module files into a subdirectory called modules/sparql/
      under your Drupal installation directory.
      
-  2. If needed download the ARC2 libriary and put in /sites/all/ilibraries
-
-  3. Go to [Administer >> Site building >> Modules] and enable the SPARQL
+  2. Go to [Administer >> Site building >> Modules] and enable the SPARQL
      API module.

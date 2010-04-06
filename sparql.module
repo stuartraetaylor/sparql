@@ -37,7 +37,7 @@ function sparql_help($path, $arg = NULL) {
 function sparql_menu() {
   return array(
     // Administer >> Site configuration >> SPARQL settings
-    'admin/settings/sparql' => array(
+    'admin/sparql/settings' => array(
       'title' => 'SPARQL settings',
       'description' => 'Settings for the SPARQL API.',
       'access arguments' => array('administer site configuration'),

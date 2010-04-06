@@ -36,28 +36,3 @@ function sparql_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'sparql_%'");
   cache_clear_all('variables', 'cache');
 }
-
-/**
- * Implements hook_requirements().
- */
-function sparql_requirements($phase) {
-  $requirements = array();
-  $t = get_t(); // Ensure translations don't break at install time
-
-  if ($phase == 'install') {
-    $requirements['arc2'] = array(
-      'title' => 'ARC2',
-      'description' => $t('The ARC2 library should be included in the libraries folder'),
-    );
-
-    $path = libraries_get_path("arc");
-    @include_once $path . '/ARC2.php';
-    if (class_exists('ARC2', TRUE)) {
-      $requirements['arc2']['severity'] = REQUIREMENT_OK;
-    }
-    else {
-      $requirements['arc2']['severity'] = REQUIREMENT_ERROR;
-    }
-  }
-  return $requirements;
-}

@@ -16,43 +16,44 @@
 function sparql_request($endpoint, $query, $options = array(), &$errors = NULL) {
   $options = array_merge(array('query' => $query, 'format' => 'application/sparql-results+json', 'output' => 'json'), $options);
 
-  // HACK
-  if (!isset($options['default-graph-uri']) && preg_match('!dbpedia!', $endpoint)) {
-    $options['default-graph-uri'] = 'http://dbpedia.org';
-  }
-
   $request = $endpoint . '?' . http_build_query($options, NULL, '&');
   $headers = array('Accept' => $options['format'] . ', */*');
   if ($response = drupal_http_request($request, $headers, 'GET')) {
     if (empty($response->code) && empty($response->data)) {
       $errors[] = t('Remote SPARQL query timed out; please try again.');
+      watchdog("sparql", 'Remote SPARQL query timed out.');
     }
     elseif (isset($response->error) && empty($response->error)) {
       // This is seen when specifying a URL that doesn't even resolve
       $errors[] = t('Invalid SPARQL endpoint specified.');
+      watchdog("sparql", 'Invalid SPARQL endpoint specified. %endpoint', array('%endpoint' => $endpoint));
     }
     elseif (isset($response->error)) {
-      $error = str_replace(SPARQL_Query::prefixes() . "\n", '', $response->data);
+      $error = str_replace(sparql_default_prefixes() . "\n", '', $response->data);
       $errors[] = t('Remote SPARQL endpoint returned error: %error', array('%error' => $error));
+      watchdog("sparql", 'Remote SPARQL endpoint returned error: %error', array('%error' => $error));
     }
     elseif (preg_match('!^([\w]+/[^;]+)!', $response->headers['Content-Type'], $matches)) {
 
       switch ($format = $matches[1]) {
         case 'application/sparql-results+json':
+        case 'text/javascript':
           return sparql_parse_json_results($response->data);
 
         case 'application/sparql-results+xml':
           return sparql_parse_xml_results($response->data);
-
-        default:
-          foreach (rdf_get_formats('info', 'r') as $reader) {
-            if ($reader->mime_type == $format) {
-              if ($result = rdf_unserialize($response->data, array('format' => $reader->name, 'uri' => $endpoint)))
-                return new ArrayIterator($result);
-              break;
-            }
+        case 'text/plain':
+          // Text plain could be either.
+          if (json_decode($response->data)) {
+            return sparql_parse_json_results($response->data);
           }
+          elseif (simplexml_load_string($response->data)) {
+            return sparql_parse_xml_results($response->data);
+          }
+          // If either case is not true then drop through to default.
+        default:
           $errors[] = t('Unknown SPARQL results format: %type.', array('%type' => $format));
+          watchdog("sparql", 'Unknown SPARQL results format: %type.', array('%type' => $format));
           break;
       }
     }
