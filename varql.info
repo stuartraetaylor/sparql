@@ -1,0 +1,12 @@
+; $id $
+name = VARQL
+description = Views SPARQL Query Builder
+package = Views
+version = VERSION
+core = 7.x
+dependencies[] = views
+dependencies[] = rdfx
+files[] = varql.module
+files[] = handlers/varql_handler_field.inc
+files[] = varql.views.inc
+files[] = plugins/varql_plugin_query_sparql.inc

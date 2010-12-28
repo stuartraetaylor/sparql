@@ -1,0 +1,7 @@
+; $Id$
+
+name = SPARQL Endpoints Registry
+description = SPARQL Endpoints Registry.
+version = VERSION
+core = 7.x
+files[] = sparql_endpoint.module
