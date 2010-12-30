@@ -28,9 +28,12 @@ function varql_views_data_alter(&$data) {
         $bn_rdf_mapping = $bn_value['rdf_mapping'];
         $new_fields = array();
         foreach ($bn_rdf_mapping as $key => $field ) {
-          $group = ucwords("$bt_key ( $bn_key )");
+          if($key == 'rdftype')
+            continue;
+          $group = ucwords("$bt_key ( $bn_key )");  
           $new_field = array(
             'title' => $key,
+            'help' => t('RDF mapping: %rdf-mapping', array('%rdf-mapping' => implode(', ', $bn_rdf_mapping[$key]['predicates']))),
             'group' => "VARQL :: $group",
             'field' => array(
               'handler' => 'varql_handler_field',
