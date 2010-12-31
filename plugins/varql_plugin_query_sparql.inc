@@ -159,6 +159,11 @@ class varql_plugin_query_sparql extends views_plugin_query {
 
  // function options_validate(&$form, &$form_state) { }
 
+  function validate() {
+    if($this->options['endpoint'] == '') {
+      return array('Please choose a SPARQL Endpoint from "Query settings"');
+    }
+  }
  // function options_submit(&$form, &$form_state) { }
 
  // function summary_title() {
