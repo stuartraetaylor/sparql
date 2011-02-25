@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * @file
  * sparql.admin.inc - SPARQL API admin page callbacks.

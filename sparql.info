@@ -1,4 +1,3 @@
-; $Id$
 name = SPARQL API
 description = Enables the use of SPARQL queries.
 package = RDF

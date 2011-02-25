@@ -1,4 +1,3 @@
-// $Id$
 
 SPARQL for Drupal 7.x
 =====================

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * sparql.module - Enables the use of SPARQL queries with the RDF API.
  *
