@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Object used to create a SELECT query.

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 function varql_views_data() {
   $data['varql']['table']['group']  = t('VARQL');

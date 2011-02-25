@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Base field handler that has no options and renders an unformatted field.
