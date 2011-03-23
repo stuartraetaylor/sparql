@@ -111,7 +111,7 @@ function sparql_endpoint_load($seid, $reset = FALSE) {
   return reset($sparql_endpoint);
 }
 
-function sparql_endpoint_load_multiple($seids = array(), $conditions = array(), $reset = FALSE) {
+function sparql_endpoint_load_multiple($seids = FALSE, $conditions = array(), $reset = FALSE) {
   return entity_load('sparql_endpoint', $seids, $conditions, $reset);
 }
 
