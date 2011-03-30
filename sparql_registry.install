@@ -6,11 +6,11 @@
  * @see hook_schema()
  * @link schemaapi Schema API @endlink
  */
-function sparql_endpoint_schema() {
-  $schema['sparql_endpoint'] = array(
+function sparql_registry_schema() {
+  $schema['sparql_registry'] = array(
     'description' => 'The base table for SPARQL Endpoints',
     'fields' => array(
-      'seid' => array(
+      'srid' => array(
         'description' => 'The primary identifier for an endpoint.',
         'type' => 'serial',
         'unsigned' => TRUE,
@@ -38,7 +38,7 @@ function sparql_endpoint_schema() {
         'default' => '',
       ),
     ),
-    'primary key' => array('seid'),
+    'primary key' => array('srid'),
   );
   return $schema;
 }

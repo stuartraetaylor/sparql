@@ -1,0 +1,4 @@
+name = SPARQL Endpoint Registry
+description = SPARQL Endpoint Registry
+core = 7.x
+files[] = sparql_registry.module
