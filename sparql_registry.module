@@ -22,7 +22,7 @@ function sparql_registry_menu() {
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('sparql_registry_form_edit', 1),
-    'access callback' => TRUE, 
+    'access callback' => TRUE,
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
   );
@@ -41,13 +41,11 @@ function sparql_registry_menu() {
     'access callback' => TRUE,
     'page callback' => 'sparql_registry_page_admin',
     'page arguments' => array('list'),
-    'weight' => -10,
   );
 
   $items['admin/structure/sparql_registry/list'] = array(
     'title' => 'List',
     'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -10,
   );
 
   $items['admin/structure/sparql_registry/create'] = array(
@@ -142,7 +140,7 @@ function sparql_registry_page($sparql_registry) {
     'endpoint' => $sparql_registry->endpoint,
     'dataset'  => $sparql_registry->dataset,
   );
-  
+
 
   drupal_set_title($sparql_registry->title);
   // Build fields content.
