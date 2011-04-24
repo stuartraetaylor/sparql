@@ -21,24 +21,6 @@ function sparql_help($path, $arg = NULL) {
   }
 }
 
-
-/**
- * Implements hook_menu().
- */
-function sparql_menu() {
-  return array(
-    // Administer >> Site configuration >> SPARQL settings
-    'admin/sparql/settings' => array(
-      'title' => 'SPARQL settings',
-      'description' => 'Settings for the SPARQL API.',
-      'access arguments' => array('administer site configuration'),
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('sparql_admin_settings'),
-      'file' => 'sparql.admin.inc',
-    ),
-  );
-}
-
 /**
  * Executes a SPARQL query on either a local SPARQL engine if available or
  * attempts to find a working public SPARQL endpoint on the web.
