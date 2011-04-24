@@ -9,4 +9,3 @@ files[] = sparql.admin.inc
 files[] = sparql.client.inc
 files[] = sparql.install
 files[] = sparql.test
-configure = admin/settings/sparql
