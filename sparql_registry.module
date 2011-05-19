@@ -1,6 +1,19 @@
 <?php
 
 /**
+ * Implements hook_permission().
+ */
+function sparql_registry_permission() {
+  $perms = array(
+    'administer sparql registry' => array(
+      'title' => t('Administer SPARQL endpoints registry'),
+    ),
+  );
+
+  return $perms;
+}
+
+/**
  * Implements hook_menu().
  */
 function sparql_registry_menu() {
@@ -10,19 +23,19 @@ function sparql_registry_menu() {
     'title arguments' => array(1),
     'page callback' => 'sparql_registry_page',
     'page arguments' => array(1),
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'type' => MENU_CALLBACK,
   );
   $items['sparql_registry/%sparql_registry/view'] = array(
     'title' => 'View',
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['sparql_registry/%sparql_registry/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('sparql_registry_form_edit', 1),
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
   );
@@ -31,14 +44,14 @@ function sparql_registry_menu() {
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('sparql_registry_delete_confirm', 1),
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'weight' => 10,
     'type' => MENU_LOCAL_TASK,
   );
   $items['admin/structure/sparql_registry'] = array(
     'title' => 'SPARQL Endpoints Registry',
     'description' => 'Manage sparql endpoint entities.',
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'page callback' => 'sparql_registry_page_admin',
     'page arguments' => array('list'),
   );
@@ -51,7 +64,7 @@ function sparql_registry_menu() {
   $items['admin/structure/sparql_registry/create'] = array(
     'title' => 'Add SPARQL endpoint',
     'page arguments' => array('create'),
-    'access callback' => TRUE,
+    'access arguments' => array('administer sparql registry'),
     'type' => MENU_LOCAL_ACTION,
   );
 
