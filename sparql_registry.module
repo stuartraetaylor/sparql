@@ -77,7 +77,7 @@ function sparql_registry_menu() {
 function sparql_registry_entity_info() {
   $return = array(
     'sparql_registry' => array(
-      'label' => t('SPARQL Endpoint Registry'),
+      'label' => t('SPARQL Endpoints Registry'),
       'base table' => 'sparql_registry',
       'uri callback' => 'sparql_registry_uri',
       'fieldable' => TRUE,
@@ -86,7 +86,7 @@ function sparql_registry_entity_info() {
       ),
       'bundles' => array(
         'sparql_registry' => array(
-          'label' => t('SPARQL Endpoint Registry Item'),
+          'label' => t('SPARQL Endpoints Registry Item'),
           'admin' => array(
             'path' => 'admin/structure/sparql_registry',
           ),
