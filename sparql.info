@@ -2,6 +2,7 @@ name = SPARQL API
 description = Enables the use of SPARQL queries.
 package = RDF
 dependencies[] = rdf
+dependencies[] = rdfx
 core = 7.x
 php = 5.2
 files[] = sparql.module
