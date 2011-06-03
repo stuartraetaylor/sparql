@@ -3,13 +3,6 @@
  * @file
  * API function for running queries on external SPARQL endpoints.
  */
-/**
- * Implements hook_init().
- */
-function sparql_init() {
-  // Include sparql.inc to provide API to other modules.
-  require_once drupal_get_path('module', 'sparql') . '/sparql.inc';
-}
 
 /**
  * Implements hook_help().
