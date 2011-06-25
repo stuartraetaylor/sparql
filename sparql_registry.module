@@ -321,6 +321,11 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
 function sparql_registry_form_edit_validate($form, &$form_state) {
   // Attach validation from Field module.
   field_attach_form_validate('sparql_registry', (object) $form_state['values'], $form, $form_state);
+
+  // Check if endpoint has a valid url.
+  if (!valid_url($form_state['values']['endpoint'], TRUE)) {
+    form_set_error('endpoint', 'Endpoint value is not a valid url');
+  }
 }
 
 function sparql_registry_form_edit_submit($form, &$form_state) {
