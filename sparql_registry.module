@@ -334,7 +334,7 @@ function sparql_registry_form_edit_submit($form, &$form_state) {
   field_attach_submit('sparql_registry', $edit, $form, $form_state);
   // Save own data.
   sparql_registry_save($edit);
-  $form_state['redirect'] = "sparql_registry/$edit->srid";
+  $form_state['redirect'] = "admin/structure/sparql_registry";
 }
 
 function sparql_registry_delete_confirm($form, &$form_state, $sparql_registry) {
@@ -357,5 +357,5 @@ function sparql_registry_delete_confirm_submit($form, &$form_state) {
     drupal_set_message(t('%title has been deleted.', array('%title' => $sparql_registry->title)));
   }
 
-  $form_state['redirect'] = '<front>';
+  $form_state['redirect'] = "admin/structure/sparql_registry";
 }
