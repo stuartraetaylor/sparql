@@ -18,45 +18,9 @@ function sparql_endpoint_menu() {
   return $items;
 }
 
-function sparql_endpoint_initialize($type = 'store') {
-  $db = $GLOBALS['databases']['default']['default'];
-  $config = array(
-    /* db */
-    'db_host' => $db['host'],
-    'db_name' => $db['database'],
-    'db_user' => $db['username'],
-    'db_pwd' => $db['password'],
-    /* store */
-    'store_name' => 'sparql_endpoint_arc2',
-
-    /* endpoint */
-    'endpoint_features' => array(
-      'select', 'construct', 'ask', 'describe',
-      'load', 'insert', 'delete',
-      'dump' /* dump is a special command for streaming SPOG export */
-    ),
-    'endpoint_timeout' => 60, /* not implemented in ARC2 preview */
-    'endpoint_read_key' => '', /* optional */
-    'endpoint_write_key' => 'somekey', /* optional */
-    'endpoint_max_limit' => 500, /* optional */
-  );
-
-  /* instantiation */
-  if ($type == 'endpoint') {
-    $store = ARC2::getStoreEndpoint($config);
-  }
-  else {
-    $store = ARC2::getStore($config);
-  }
-  if (!$store->isSetUp()) {
-    $store->setUp();
-  }
-  return $store;
-}
-
 function sparql_endpoint_index_rdf() {
   // Instantiate the ARC2 local store.
-  $store = sparql_endpoint_initialize();
+  $store = sparql_get_store('site_endpoint');
 
   // Emtpy the local store.
   // FIXME optimize by doing this only when creating/saving a node.
@@ -120,7 +84,7 @@ function sparql_endpoint_sparql_endpoint() {
   }
 
   // Instantiate the ARC2 SPARQL endpoint.
-  $ep = sparql_endpoint_initialize('endpoint');
+  $ep = sparql_get_store('site_endpoint', SPARQL_ENDPOINT);
   $ep->go();
 }
 
@@ -129,7 +93,7 @@ function sparql_endpoint_sparql_endpoint() {
  */
 function sparql_endpoint_node_insert($node) {
   // Instantiate the ARC2 local store.
-  $store = sparql_endpoint_initialize();
+  $store = sparql_get_store('site_endpoint');
 
   // Build RDF model for the node.
   $rdf = rdfx_get_rdf_model('node', $node->nid);
@@ -143,7 +107,7 @@ function sparql_endpoint_node_insert($node) {
  */
 function sparql_endpoint_node_update($node) {
   // Instantiate the ARC2 local store.
-  $store = sparql_endpoint_initialize();
+  $store = sparql_get_store('site_endpoint');
 
   // Build RDF model for the node.
   $rdf = rdfx_get_rdf_model('node', $node->nid);

@@ -4,6 +4,8 @@
  * API function for running queries on external SPARQL endpoints.
  */
 
+define('SPARQL_ENDPOINT', 'endpoint');
+
 /**
  * Implements hook_help().
  */
@@ -84,6 +86,44 @@ function sparql_request($query, $endpoint = NULL, $options = array(), $datasets 
   }
 
   return $rows;
+}
+
+function sparql_get_store($name, $type = 'store') {
+  $db = $GLOBALS['databases']['default']['default'];
+  $name = "sparql_store_$name";
+
+  $config = array(
+    /* db */
+    'db_host' => $db['host'],
+    'db_name' => $db['database'],
+    'db_user' => $db['username'],
+    'db_pwd' => $db['password'],
+    /* store */
+    'store_name' => $name,
+
+    /* endpoint */
+    'endpoint_features' => array(
+      'select', 'construct', 'ask', 'describe',
+      'load', 'insert', 'delete',
+      'dump' /* dump is a special command for streaming SPOG export */
+    ),
+    'endpoint_timeout' => 60, /* not implemented in ARC2 preview */
+    'endpoint_read_key' => '', /* optional */
+    'endpoint_write_key' => 'somekey', /* optional */
+    'endpoint_max_limit' => 500, /* optional */
+  );
+
+  /* instantiation */
+  if ($type == SPARQL_ENDPOINT) {
+    $store = ARC2::getStoreEndpoint($config);
+  }
+  else {
+    $store = ARC2::getStore($config);
+  }
+  if (!$store->isSetUp()) {
+    $store->setUp();
+  }
+  return $store;
 }
 
 /**
