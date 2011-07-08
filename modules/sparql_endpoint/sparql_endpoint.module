@@ -71,18 +71,6 @@ function sparql_endpoint_index_rdf() {
 }
 
 function sparql_endpoint_sparql_endpoint() {
-  // FIXME add all the ns in the default SPARQL query
-  // patch to be committed to ARC2.
-  $nss = rdf_get_namespaces();
-  global $default_p;
-  // @temp remove some less used prefixes.
-  unset($nss['sioct']);
-  unset($nss['rss']);
-  $nss['site'] = url('', array('absolute' => TRUE));
-  foreach($nss as $prefix => $ns) {
-    $default_p .= "PREFIX $prefix: <" . $ns . ">\n";
-  }
-
   // Instantiate the ARC2 SPARQL endpoint.
   $ep = sparql_get_store('site_endpoint', SPARQL_ENDPOINT);
   $ep->go();
