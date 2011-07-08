@@ -207,17 +207,25 @@ function sparql_registry_field_extra_fields() {
   return $return;
 }
 
+/**
+ * Save the SPARQL registry form values to the database.
+ */
 function sparql_registry_save(&$edit) {
   field_attach_presave('sparql_registry', $edit);
+
+  // If there is an existing endpoint record, update the record. Otherwise,
+  // insert a new endpoint record.
   if (!empty($edit->srid)) {
-  	drupal_write_record('sparql_registry', $edit, 'srid');
+    drupal_write_record('sparql_registry', $edit, 'srid');
     field_attach_update('sparql_registry', $edit);
     module_invoke_all('entity_update', 'sparql_registry', $edit);
-  	return $edit;
   }
-  drupal_write_record('sparql_registry', $edit);
-	field_attach_insert('sparql_registry', $edit);
-	module_invoke_all('entity_insert', 'sparql_registry', $edit);
+  else {
+    drupal_write_record('sparql_registry', $edit);
+    field_attach_insert('sparql_registry', $edit);
+    module_invoke_all('entity_insert', 'sparql_registry', $edit);
+  }
+
   return $edit;
 }
 
