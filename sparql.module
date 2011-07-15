@@ -86,12 +86,17 @@ function _sparql_request($query, $endpoint) {
 
   // Execute the query.
   $rs = $store->query($query);
-  if (!$store->getErrors()) {
+  if ($errors = $store->getErrors()) {
+    // Log errors.
+    foreach ($errors as $error) {
+      trigger_error($error, E_USER_ERROR);
+    }
+    return NULL;
+  }
+  else {
     // Success!
     return $rs;
   }
-
-  return NULL;
 }
 
 /**
