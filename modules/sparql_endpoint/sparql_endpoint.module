@@ -13,7 +13,7 @@ function sparql_endpoint_menu() {
   $items['sparql_endpoint_index'] = array(
     'title' => 'Build RDF index',
     'page callback' => 'sparql_endpoint_index_rdf',
-    'access arguments' => array('access content'),
+    'access arguments' => array('administer rdf'),
   );
   return $items;
 }
