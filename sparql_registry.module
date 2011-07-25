@@ -121,7 +121,7 @@ function sparql_registry_load_by_uri($uri, $reset = FALSE) {
   $query = new EntityFieldQuery();
   $query
     ->entityCondition('entity_type', 'sparql_registry', '=')
-    ->propertyCondition('endpoint', $uri, '=');
+    ->propertyCondition('uri', $uri, '=');
   $result = $query->execute();
 
   // The endpoint is in a double nested array. Use reset to pull it out.
@@ -186,7 +186,7 @@ function sparql_registry_page_admin($tab = '') {
 function sparql_registry_form_list() {
   $header = array(
     'title' => array('data' => t('Title'), 'field' => 'sr.title'),
-    'endpoint' => array('data' => t('Endpoint'), 'field' => 'endpoint'),
+    'uri' => array('data' => t('Endpoint URI'), 'field' => 'uri'),
     'dataset' => array('data' => t('Dataset'), 'field' => 'dataset'),
     'edit' => array('data' => t('Edit')),
     'delete' => array('data' => t('Delete')),
@@ -197,7 +197,7 @@ function sparql_registry_form_list() {
 
   $query = $query->extend('PagerDefault')->extend('TableSort');
   $query
-    ->fields('sr', array('srid', 'title', 'endpoint', 'dataset'))
+    ->fields('sr', array('srid', 'title', 'uri', 'dataset'))
     ->limit(20)
     ->orderByHeader($header)
     ->setCountQuery($count_query);
@@ -209,7 +209,7 @@ function sparql_registry_form_list() {
   foreach ($result as $row) {
     $options[$row->srid] = array(
       'title' => $row->title,
-      'endpoint' => $row->endpoint,
+      'uri' => $row->uri,
       'dataset' => $row->dataset,
       'edit' => array('data' => array(
         '#type' => 'link',
@@ -241,7 +241,7 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
   if (!isset($edit)) {
     $edit = (object) array(
       'title' => '',
-      'endpoint' => '',
+      'uri' => '',
       'dataset' => '',
     );
   }
@@ -251,10 +251,11 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
     '#default_value' => $edit->title,
     '#required' => TRUE,
   );
-  $form['endpoint'] = array(
+  $form['uri'] = array(
     '#type' => 'textfield',
-    '#title' => t('Endpoint'),
-    '#default_value' => $edit->endpoint,
+    '#title' => t('Endpoint URI'),
+    '#description' => t('The URL used to access the endpoint. For example, !dbpedia.', array('!dbpedia' => 'http://dbpedia.org/sparql')),
+    '#default_value' => $edit->uri,
     '#required' => TRUE,
   );
   $form['dataset'] = array(
@@ -283,8 +284,8 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
 
 function sparql_registry_form_edit_validate($form, &$form_state) {
   // Check if endpoint has a valid url.
-  if (!valid_url($form_state['values']['endpoint'], TRUE)) {
-    form_set_error('endpoint', 'Endpoint value is not a valid url');
+  if (!valid_url($form_state['values']['uri'], TRUE)) {
+    form_set_error('uri', 'Endpoint URI value is not a valid URI.');
   }
 }
 

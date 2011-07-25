@@ -6,4 +6,5 @@ http://drupal.org/node/222959/commits
 
 SPARQL 7.x-2.x-dev
 ------------------
+- #1214510: Change 'endpoint' property to 'uri' on endpoint objects
 - #1211898: Change API to take endpoint object.

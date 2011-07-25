@@ -163,7 +163,7 @@ function _sparql_init_remote_store($endpoint) {
   /* configuration */
   $config = array(
     /* remote endpoint */
-    'remote_store_endpoint' => $endpoint->endpoint,
+    'remote_store_endpoint' => $endpoint->uri,
   );
 
   /* instantiation */
