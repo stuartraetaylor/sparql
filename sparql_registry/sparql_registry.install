@@ -30,6 +30,13 @@ function sparql_registry_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'options' => array(
+        'description' => 'Additional query options.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+      ),
       'dataset' => array(
         'description' => 'dataset',
         'type' => 'varchar',
@@ -55,4 +62,18 @@ function sparql_registry_update_7200() {
     'default' => '',
   );
   db_change_field('sparql_registry', 'endpoint', 'uri', $schema);
+}
+
+/**
+ * Add columns to SPARQL Registry database table.
+ */
+function sparql_registry_update_7201() {
+  $schema = array(
+    'description' => 'Additional query options.',
+    'type' => 'blob',
+    'not null' => FALSE,
+    'size' => 'big',
+    'serialize' => TRUE,
+  );
+  db_add_field('sparql_registry', 'options', $schema);
 }

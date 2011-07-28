@@ -160,10 +160,17 @@ function _sparql_init_store($name, $endpoint = FALSE) {
  *   An ARC2 store object.
  */
 function _sparql_init_remote_store($endpoint) {
-  /* configuration */
+  $endpoint_url = $endpoint->uri;
+
+  // If there are query parameters that need to be added before ARC2 processing,
+  // add them here. Filter the array to remove empty values.
+  if (isset($endpoint->options['query_parameters'])) {
+    $endpoint_url = url($endpoint_url, array('query' => array_filter($endpoint->options['query_parameters'])));
+  }
+
   $config = array(
     /* remote endpoint */
-    'remote_store_endpoint' => $endpoint->uri,
+    'remote_store_endpoint' => $endpoint_url,
   );
 
   /* instantiation */

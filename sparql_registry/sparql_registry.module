@@ -113,8 +113,9 @@ function sparql_registry_admin_paths() {
 }
 
 function sparql_registry_load($srid, $reset = FALSE) {
-  $sparql_registry = sparql_registry_load_multiple(array($srid), array(), $reset);
-  return reset($sparql_registry);
+  $sparql_registries = sparql_registry_load_multiple(array($srid), array(), $reset);
+  $sparql_registry = reset($sparql_registries);
+  return $sparql_registry;
 }
 
 function sparql_registry_load_by_uri($uri, $reset = FALSE) {
@@ -133,6 +134,13 @@ function sparql_registry_load_by_uri($uri, $reset = FALSE) {
 }
 
 function sparql_registry_load_multiple($srids = FALSE, $conditions = array(), $reset = FALSE) {
+  $sparql_registries = entity_load('sparql_registry', $srids, $conditions, $reset);
+  // Unserialize the options array.
+  foreach ($sparql_registries as $sparql_registry) {
+    if (!is_array($sparql_registry->options)) {
+      $sparql_registry->options = unserialize($sparql_registry->options);
+    }
+  }
   return entity_load('sparql_registry', $srids, $conditions, $reset);
 }
 
@@ -243,8 +251,15 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
       'title' => '',
       'uri' => '',
       'dataset' => '',
+      'options' => array(
+        'query_parameters' => array(),
+      ),
     );
   }
+
+  // Because we have many fields with the same keys, we have to set #tree to
+  // access them.
+  $form['#tree'] = TRUE;
   $form['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
@@ -265,6 +280,69 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
     '#required' => FALSE,
   );
 
+  $form['options'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Advanced query options'),
+  );
+  $form['options']['query_parameters'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Query parameters'),
+    // Set up the wrapper so that AJAX will be able to replace the fieldset.
+    '#prefix' => '<div id="options-fieldset-wrapper">',
+    '#suffix' => '</div>',
+  );
+
+  // Build the fieldset with the proper number of query parameter fields.
+  if (!isset($form_state['num_query_parameters'])) {
+    if (count($edit->options['query_parameters']) > 0) {
+      $form_state['num_query_parameters'] = count($edit->options['query_parameters']);
+    }
+    else {
+      $form_state['num_query_parameters'] = 1;
+    }
+    $parameters = $edit->options['query_parameters'];
+  }
+
+  for ($i = 0; $i < $form_state['num_query_parameters']; $i++) {
+    $key = key($parameters);
+    $value = array_shift($parameters);
+
+    $form['options']['query_parameters'][$i]['key'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Key'),
+      '#default_value' => $key,
+    );
+    $form['options']['query_parameters'][$i]['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Value'),
+      '#default_value' => $value,
+    );
+  }
+  $form['options']['add_name'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add one more'),
+    '#submit' => array('sparql_registry_add_more_add_one'),
+    // See the examples in ajax_example.module for more details on the
+    // properties of #ajax.
+    '#ajax' => array(
+      'callback' => 'sparql_registry_add_more_callback',
+      'wrapper' => 'options-fieldset-wrapper',
+    ),
+    '#limit_validation_errors' => array(),
+  );
+  if ($form_state['num_query_parameters'] > 1) {
+    $form['options']['remove_name'] = array(
+      '#type' => 'submit',
+      '#value' => t('Remove one'),
+      '#submit' => array('sparql_registry_add_more_remove_one'),
+      '#ajax' => array(
+        'callback' => 'sparql_registry_add_more_callback',
+        'wrapper' => 'options-fieldset-wrapper',
+      ),
+      '#limit_validation_errors' => array(),
+    );
+  }
+
   // Store ID if any.
   if (!empty($edit->srid)) {
     $form['srid'] = array(
@@ -282,6 +360,37 @@ function sparql_registry_form_edit($form, &$form_state, $edit = NULL) {
   return $form;
 }
 
+/**
+ * Callback for both ajax-enabled buttons.
+ *
+ * This simply selects and returns the fieldset with the names in it.
+ */
+function sparql_registry_add_more_callback($form, $form_state) {
+  return $form['options']['query_parameters'];
+}
+
+/**
+ * Submit handler for the "add-one-more" button.
+ *
+ * It just increments the max counter and causes a rebuild.
+ */
+function sparql_registry_add_more_add_one($form, &$form_state) {
+  $form_state['num_query_parameters']++;
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Submit handler for the "remove one" button.
+ *
+ * Decrements the max counter and causes a form rebuild.
+ */
+function sparql_registry_add_more_remove_one($form, &$form_state) {
+  if ($form_state['num_query_parameters'] > 1) {
+    $form_state['num_query_parameters']--;
+  }
+  $form_state['rebuild'] = TRUE;
+}
+
 function sparql_registry_form_edit_validate($form, &$form_state) {
   // Check if endpoint has a valid url.
   if (!valid_url($form_state['values']['uri'], TRUE)) {
@@ -290,7 +399,19 @@ function sparql_registry_form_edit_validate($form, &$form_state) {
 }
 
 function sparql_registry_form_edit_submit($form, &$form_state) {
-  $edit = (object) $form_state['values'];
+  $values = $form_state['values'];
+
+  // Take the parameters array structure from the form and restructure it to be
+  // easier to use in the API.
+  $parameters = array();
+  foreach ($values['options']['query_parameters'] as $parameter) {
+    $parameters[$parameter['key']] = $parameter['value'];
+  }
+  $values['options']['query_parameters'] = $parameters;
+
+  // Create an object to pass to drupal_write_record().
+  $edit = (object) $values;
+
   // Save own data.
   sparql_registry_save($edit);
   $form_state['redirect'] = "admin/structure/sparql_registry";
