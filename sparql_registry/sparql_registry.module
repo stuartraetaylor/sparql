@@ -119,18 +119,24 @@ function sparql_registry_load($srid, $reset = FALSE) {
 }
 
 function sparql_registry_load_by_uri($uri, $reset = FALSE) {
+  $srid = NULL;
+  $sparql_registry = NULL;
+
   $query = new EntityFieldQuery();
   $query
     ->entityCondition('entity_type', 'sparql_registry', '=')
     ->propertyCondition('uri', $uri, '=');
   $result = $query->execute();
 
-  // The endpoint is in a double nested array. Use reset to pull it out.
-  $endpoint = reset(reset($result));
-  $srid = $endpoint->srid;
+  if (!empty($result)) {
+    // The endpoint is in a double nested array. Use reset to pull it out.
+    $endpoint = reset(reset($result));
+    $srid = $endpoint->srid;
+    $sparql_registry = sparql_registry_load_multiple(array($srid), array(), $reset);
+    return reset($sparql_registry);
+  }
 
-  $sparql_registry = sparql_registry_load_multiple(array($srid), array(), $reset);
-  return reset($sparql_registry);
+  return NULL;
 }
 
 function sparql_registry_load_multiple($srids = FALSE, $conditions = array(), $reset = FALSE) {
