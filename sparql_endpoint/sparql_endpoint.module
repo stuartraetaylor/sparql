@@ -77,31 +77,51 @@ function sparql_endpoint_sparql_endpoint() {
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_entity_insert().
  */
-function sparql_endpoint_node_insert($node) {
+function sparql_endpoint_entity_insert($entity, $entity_type) {
   // Instantiate the ARC2 local store.
   $store = sparql_get_store('site_endpoint');
 
-  // Attach RDF mappings and build RDF model for the node.
-  $node = node_load($node->nid);
-  $rdf = rdfx_get_rdf_model('node', $node->nid);
+  // Extract entity id.
+  list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
+
+  // Build RDF model for the entity.
+  $rdf = rdfx_get_rdf_model($entity_type, $id);
 
   // Add node to the store.
   $store->insert($rdf->index, $rdf->uri);
 }
 
 /**
- * Implements hook_node_update().
+ * Implements hook_entity_update().
  */
-function sparql_endpoint_node_update($node) {
+function sparql_endpoint_entity_update($entity, $entity_type) {
   // Instantiate the ARC2 local store.
   $store = sparql_get_store('site_endpoint');
 
-  // Build RDF model for the node.
-  $rdf = rdfx_get_rdf_model('node', $node->nid);
+  // Extract entity id.
+  list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
 
-  // Cleans out the graph and reindex the node.
+  // Build RDF model for the entity after clearing its cache.
+  entity_get_controller($entity_type)->resetCache(array($id));
+  $rdf = rdfx_get_rdf_model($entity_type, $id);
+
+  // Clean out the graph and reindex the entity.
   $store->query('DELETE FROM <' . $rdf->uri . '>');
   $store->insert($rdf->index, $rdf->uri);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function sparql_endpoint_entity_delete($entity, $entity_type) {
+  // Instantiate the ARC2 local store.
+  $store = sparql_get_store('site_endpoint');
+
+  // Extract entity id.
+  list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
+
+  // Remove entity graph from RDF store.
+  $store->query('DELETE FROM <' . rdfx_resource_uri($entity_type, $entity) . '>');
 }
