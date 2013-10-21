@@ -130,7 +130,8 @@ function sparql_registry_load_by_uri($uri, $reset = FALSE) {
 
   if (!empty($result)) {
     // The endpoint is in a double nested array. Use reset to pull it out.
-    $endpoint = reset(reset($result));
+    $inner_result = reset($result);
+    $endpoint = reset($inner_result);
     $srid = $endpoint->srid;
     $sparql_registry = sparql_registry_load_multiple(array($srid), array(), $reset);
     return reset($sparql_registry);
