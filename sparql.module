@@ -176,7 +176,8 @@ function _sparql_init_remote_store($endpoint) {
   );
 
   /* instantiation */
-  $store = ARC2::getRemoteStore($config);
+  //$store = ARC2::getRemoteStore($config);
+  $store = ARC2::getComponent('SPARQL11RemoteStore', $config);
 
   return $store;
 }
