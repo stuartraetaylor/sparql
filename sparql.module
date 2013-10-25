@@ -173,6 +173,7 @@ function _sparql_init_remote_store($endpoint) {
     'remote_store_endpoint' => $endpoint_url,
     'proxy_host' => variable_get('proxy_server', ''),
     'proxy_port' => variable_get('proxy_port', ''),
+    'proxy_skip' => variable_get('proxy_exceptions', ''),
   );
 
   /* instantiation */
